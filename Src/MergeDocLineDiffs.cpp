@@ -88,15 +88,20 @@ void CMergeDoc::AddToSubstitutionFilters(CMergeEditView* pView, bool bReversed)
 	String selectedText[3];
 	for (int nBuffer = 0; nBuffer < m_nBuffers; nBuffer++)
 	{
-		HighlightDiffRect(m_pView[pView->m_nThisGroup][nBuffer], rc[nBuffer]);
+		/// Use selection as the first option
+		/// If there is no user selection use the line difference
 		selectedText[nBuffer] = String(m_pView[pView->m_nThisGroup][nBuffer]->GetSelectedText());
+		if (selectedText[nBuffer].empty())
+		{
+			HighlightDiffRect(m_pView[pView->m_nThisGroup][nBuffer], rc[nBuffer]);
+			selectedText[nBuffer] = String(m_pView[pView->m_nThisGroup][nBuffer]->GetSelectedText());
+		}
 	}
 
 	if (selectedText[0].empty())
 	{
 		return;
 	}
-
 
 	/// Check whether the pair is already registered with Substitution Filters
 	SubstitutionFiltersList &SubstitutionFiltersList = *theApp.m_pSubstitutionFiltersList.get();
